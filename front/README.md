@@ -1,48 +1,63 @@
-# vue-project
+# MotoLux — Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Sitio de MotoLux (detailing premium y mecánica de motos): home con catálogo, contacto, chat con el asistente de IA "Lux" y panel administrativo.
 
-## Recommended IDE Setup
+**Stack:** Vue 3 + TypeScript · Vite · Vue Router (hash) · Tailwind CSS v4 · lucide-vue-next
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Correr en local
 
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
+cp .env.example .env   # VITE_API_URL=http://localhost:3001
 npm install
+npm run dev            # http://localhost:5173
 ```
 
-### Compile and Hot-Reload for Development
+| Script | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Revisa tipos (`vue-tsc`) y genera `dist/` |
+| `npm run preview` | Sirve `dist/` para probar el build |
+| `npm run lint` | oxlint + ESLint |
 
-```sh
-npm run dev
+## Rutas
+
+- `#/` — Home
+- `#/admin` — Panel administrativo (requiere login contra el backend)
+
+Se usan rutas con hash porque GitHub Pages solo sirve archivos estáticos. Por eso los enlaces internos (`#servicios`, `#contacto`…) hacen scroll con `scrollToSection()` en vez de cambiar la URL.
+
+## Estructura
+
+```
+src/
+  api.ts            único lugar que habla con el backend (una función por ruta)
+  types.ts          contrato de datos con el backend
+  business.ts       teléfono, WhatsApp, horario, Instagram
+  lib/              format (COP, duración, imágenes), chat (openChat), scroll
+  directives/       v-reveal: animación de entrada al hacer scroll
+  components/       TheHeader, TheFooter, LuxChat
+    home/           Hero, Services, Process, Contact
+    admin/          AdminLogin, AdminDashboard, NewServiceForm
+  views/            HomeView, AdminView
+public/images/      imágenes del sitio
 ```
 
-### Type-Check, Compile and Minify for Production
+## Contrato con el backend
 
-```sh
-npm run build
-```
+| Método | Ruta | Uso |
+|---|---|---|
+| GET | `/api/health` | `{ ok: true }` |
+| GET | `/api/services` | `{ services: Service[] }` (solo activos) |
+| POST | `/api/contact` | `ContactForm` → `{ message }` · errores `{ error, fieldErrors }` |
+| POST | `/api/chat` | `{ messages: ChatMessage[] }` → `{ reply, booking }` |
+| POST | `/api/admin/login` | `{ email, password }` → `{ token, email }` |
+| GET | `/api/admin/data` | `{ appointments, clients, services, messages }` |
+| PATCH | `/api/admin/appointments/:id` | `{ status }` |
+| DELETE | `/api/admin/appointments/:id` | — |
+| POST | `/api/admin/services` | `NewService` → `{ message }` |
+| PATCH | `/api/admin/services/:id` | `{ priceFrom?, active? }` |
+| PATCH | `/api/admin/messages/:id/read` | — |
 
-### Lint with [ESLint](https://eslint.org/)
+Las rutas `/api/admin/*` (menos login) reciben `Authorization: Bearer <token>`; si responden 401 el panel vuelve al login. Los errores siempre vienen como `{ error: string, fieldErrors?: Record<string, string> }`. Los tipos exactos están en `src/types.ts`.
 
-```sh
-npm run lint
-```
+
