@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { config } from './config.js'
 import { errorHandler, notFound } from './errors.js'
+import { query } from './db/pool.js'
 
 /** Crea la app de Express (sin escuchar puerto, así las pruebas la usan directamente). */
 export function createApp() {
@@ -13,7 +14,11 @@ export function createApp() {
   app.use(cors({ origin: config.allowedOrigins }))
   app.use(express.json({ limit: '100kb' }))
 
-  app.get('/api/health', (req, res) => res.json({ ok: true }))
+  // ok: la API responde · db: la base de datos responde
+  app.get('/api/health', async (req, res) => {
+    const db = await query('SELECT 1').then(() => true, () => false)
+    res.json({ ok: true, db })
+  })
 
   app.use(notFound)
   app.use(errorHandler)
