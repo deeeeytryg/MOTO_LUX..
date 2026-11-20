@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { getHealth } from '@/api'
+import TheHeader from '@/components/TheHeader.vue'
+import TheFooter from '@/components/TheFooter.vue'
 
-// Provisional: comprueba que el front alcanza al backend configurado en VITE_API_URL.
-const api = ref<'revisando' | 'conectada' | 'sin conexión'>('revisando')
-onMounted(() => {
-  getHealth()
-    .then(() => (api.value = 'conectada'))
-    .catch(() => (api.value = 'sin conexión'))
-})
+// Provisional: las secciones reales (hero, servicios, proceso, contacto) llegan en el paso 5.
+const SECTIONS = [
+  ['servicios', 'Servicios'],
+  ['proceso', 'Proceso'],
+  ['asistente', 'Asistente IA'],
+  ['contacto', 'Contacto'],
+] as const
 </script>
 
 <template>
-  <main class="grid min-h-svh place-items-center bg-ink px-4 text-ink-foreground">
-    <div class="text-center">
+  <TheHeader />
+  <main>
+    <section id="top" class="grid min-h-[92svh] place-items-center bg-ink text-ink-foreground">
       <h1 class="text-5xl font-bold uppercase md:text-7xl">MOTO<span class="text-gold">LUX</span></h1>
-      <p class="mt-4 text-ink-foreground/70">Home en construcción.</p>
-      <p class="mt-2 text-sm">
-        API: <span :class="api === 'conectada' ? 'text-success' : 'text-gold'">{{ api }}</span>
-      </p>
-    </div>
+    </section>
+    <section
+      v-for="([id, title], i) in SECTIONS"
+      :id="id"
+      :key="id"
+      class="grid min-h-[60svh] scroll-mt-20 place-items-center"
+      :class="i % 2 ? 'bg-secondary/60' : ''"
+    >
+      <h2 class="text-4xl font-bold uppercase">{{ title }}</h2>
+    </section>
   </main>
+  <TheFooter />
 </template>
