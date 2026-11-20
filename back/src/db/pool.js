@@ -14,8 +14,13 @@ export const pool = new pg.Pool({
   max: 5,
 })
 
-if (!/^[a-z_][a-z0-9_]*$/.test(config.dbSchema)) throw new Error(`DB_SCHEMA inválido: ${config.dbSchema}`)
-pool.on('connect', (client) => client.query(`SET search_path TO ${config.dbSchema}`))
+// Solo las pruebas usan otro esquema (motolux_test); en desarrollo y producción las tablas viven en "public".
+if (config.dbSchema !== 'public') {
+  if (!/^[a-z_][a-z0-9_]*$/.test(config.dbSchema)) throw new Error(`DB_SCHEMA inválido: ${config.dbSchema}`)
+  pool.on('connect', (client) => {
+    client.query(`SET search_path TO ${config.dbSchema}`).catch(() => {})
+  })
+}
 
 export const query = (text, params) => pool.query(text, params)
 

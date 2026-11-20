@@ -62,3 +62,23 @@ export function parseServicePatch(body = {}) {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 export const isUuid = (v) => UUID.test(v)
+
+/** Datos para agendar una cita (los usa el asistente de IA). */
+export function parseAppointment(body = {}) {
+  const clientName = str(body.clientName)
+  const phone = str(body.phone).replace(/\D/g, '')
+  const motorcycle = str(body.motorcycle)
+  const errors = {}
+  if (clientName.length < 2 || clientName.length > 80) errors.clientName = 'Nombre requerido'
+  if (phone.length < 7 || phone.length > 15) errors.phone = 'Teléfono inválido'
+  if (motorcycle.length < 2 || motorcycle.length > 80) errors.motorcycle = 'Indica la marca y modelo de la moto'
+  if (!str(body.serviceId)) errors.serviceId = 'Selecciona un servicio'
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(str(body.date))) errors.date = 'Fecha inválida (AAAA-MM-DD)'
+  if (!/^\d{2}:00$/.test(str(body.time))) errors.time = 'Hora inválida (HH:00)'
+  check(errors)
+  return {
+    clientName, phone, motorcycle,
+    serviceId: str(body.serviceId), date: str(body.date), time: str(body.time),
+    notes: str(body.notes).slice(0, 300),
+  }
+}

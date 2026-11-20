@@ -25,6 +25,11 @@ export const config = {
   // Secreto para firmar los tokens (JWT). Si cambia, todas las sesiones se cierran.
   jwtSecret: env.JWT_SECRET || randomBytes(32).toString('hex'),
   sessionHours: 8,
+
+  // Asistente de IA (Anthropic). Sin API key el chat responde 503 y el resto de la API funciona igual.
+  anthropicKey: env.ANTHROPIC_API_KEY || '',
+  anthropicUrl: (env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com').replace(/\/$/, ''),
+  aiModel: env.AI_MODEL || 'claude-haiku-5-5',
 }
 
 /** Variables sin las que el servidor no debe arrancar (en producción no hay valores por defecto). */

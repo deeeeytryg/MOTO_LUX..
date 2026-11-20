@@ -5,6 +5,8 @@ process.env.DB_SCHEMA = 'motolux_test'
 process.env.ADMIN_EMAIL = 'admin@test.co'
 process.env.ADMIN_PASSWORD = 'clave-de-prueba'
 process.env.JWT_SECRET = 'secreto-de-prueba'
+// La IA se simula en las pruebas: nunca se llama a la API real.
+process.env.ANTHROPIC_API_KEY = 'clave-falsa'
 
 export const hasDb = Boolean(process.env.DATABASE_URL)
 export const skipWithoutDb = hasDb ? false : 'sin DATABASE_URL (configúrala en .env para probar la base de datos)'
