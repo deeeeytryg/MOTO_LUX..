@@ -11,12 +11,13 @@ export const skipWithoutDb = hasDb ? false : 'sin DATABASE_URL (configúrala en 
 
 /** Carga los módulos después de fijar DB_SCHEMA (los import estáticos se evaluarían antes). */
 export async function load() {
-  const [{ createApp }, db, { migrate }] = await Promise.all([
+  const [{ createApp }, db, { migrate }, { seedDemo }] = await Promise.all([
     import('../src/app.js'),
     import('../src/db/pool.js'),
     import('../src/db/migrate.js'),
+    import('../src/db/seed-demo.js'),
   ])
-  return { createApp, ...db, migrate }
+  return { createApp, ...db, migrate, seedDemo }
 }
 
 /** Esquema de pruebas limpio, con las tablas y los servicios iniciales. */
@@ -28,4 +29,11 @@ export async function resetDb({ pool, migrate }) {
 export async function dropDb({ pool }) {
   await pool.query('DROP SCHEMA IF EXISTS motolux_test CASCADE')
   await pool.end()
+}
+
+/** Token de admin válido para las pruebas. */
+export async function adminToken(app) {
+  const { default: request } = await import('supertest')
+  const res = await request(app).post('/api/admin/login').send({ email: 'admin@test.co', password: 'clave-de-prueba' })
+  return `Bearer ${res.body.token}`
 }
