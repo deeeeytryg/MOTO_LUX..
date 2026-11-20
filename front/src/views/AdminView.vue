@@ -1,8 +1,18 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { getToken, setToken } from '@/api'
+import AdminLogin from '@/components/admin/AdminLogin.vue'
+import AdminDashboard from '@/components/admin/AdminDashboard.vue'
+
+// Con token guardado se muestra el panel; si el back responde 401 o el usuario sale, se borra y vuelve al login.
+const logged = ref(Boolean(getToken()))
+function logout() {
+  setToken(null)
+  logged.value = false
+}
+</script>
+
 <template>
-  <main class="grid min-h-svh place-items-center bg-ink px-4">
-    <div class="w-full max-w-sm rounded-2xl bg-card p-8">
-      <h1 class="text-3xl font-bold uppercase">Admin MotoLux</h1>
-      <p class="mt-2 text-sm text-muted-foreground">Panel en construcción.</p>
-    </div>
-  </main>
+  <AdminDashboard v-if="logged" @logout="logout" />
+  <AdminLogin v-else @done="logged = true" />
 </template>
