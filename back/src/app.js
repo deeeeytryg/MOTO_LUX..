@@ -4,6 +4,7 @@ import { config } from './config.js'
 import { errorHandler, notFound } from './errors.js'
 import { query } from './db/pool.js'
 import { publicRoutes } from './routes/public.js'
+import { adminRoutes } from './routes/admin.js'
 
 /** Crea la app de Express (sin escuchar puerto, así las pruebas la usan directamente). */
 export function createApp() {
@@ -22,6 +23,7 @@ export function createApp() {
   })
 
   app.use('/api', publicRoutes())
+  app.use('/api/admin', adminRoutes())
 
   app.use(notFound)
   app.use(errorHandler)
