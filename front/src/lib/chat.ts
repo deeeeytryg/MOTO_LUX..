@@ -1,5 +1,5 @@
 // Abre el chat de Lux desde cualquier botón (header, servicios, etc.) con un evento global.
-// El componente Chat (paso 6) escucha este evento; si recibe un mensaje, lo envía de una vez.
+// El componente LuxChat escucha este evento; si recibe un mensaje, lo envía de una vez.
 export const CHAT_EVENT = 'motolux:chat'
 
 export const openChat = (message?: string) =>
