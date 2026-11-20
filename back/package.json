@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "node --env-file-if-exists=.env --watch src/server.js",
     "start": "node src/server.js",
+    "start:prod": "node src/db/migrate.js && node src/server.js",
     "db:migrate": "node --env-file-if-exists=.env src/db/migrate.js",
     "db:seed-demo": "node --env-file-if-exists=.env src/db/seed-demo.js",
     "test": "node --env-file-if-exists=.env --disable-warning=DeprecationWarning --test --test-concurrency=1 \"test/*.test.js\""

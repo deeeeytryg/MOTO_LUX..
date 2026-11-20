@@ -1,0 +1,29 @@
+# Blueprint de Render para el backend de MotoLux (Render → New → Blueprint → este repo).
+# Los valores marcados con sync: false se piden la primera vez que se crea el Blueprint.
+services:
+  - type: web
+    name: motolux-api
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: back
+    buildCommand: npm ci --omit=dev
+    # El plan gratis no tiene preDeployCommand: la migración (idempotente) corre al arrancar.
+    startCommand: npm run start:prod
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGINS
+        value: https://deeeeytryg.github.io
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
