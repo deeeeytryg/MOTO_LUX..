@@ -3,6 +3,7 @@ import cors from 'cors'
 import { config } from './config.js'
 import { errorHandler, notFound } from './errors.js'
 import { query } from './db/pool.js'
+import { publicRoutes } from './routes/public.js'
 
 /** Crea la app de Express (sin escuchar puerto, así las pruebas la usan directamente). */
 export function createApp() {
@@ -19,6 +20,8 @@ export function createApp() {
     const db = await query('SELECT 1').then(() => true, () => false)
     res.json({ ok: true, db })
   })
+
+  app.use('/api', publicRoutes())
 
   app.use(notFound)
   app.use(errorHandler)

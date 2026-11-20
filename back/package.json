@@ -9,7 +9,7 @@
     "dev": "node --env-file-if-exists=.env --watch src/server.js",
     "start": "node src/server.js",
     "db:migrate": "node --env-file-if-exists=.env src/db/migrate.js",
-    "test": "node --env-file-if-exists=.env --test --test-concurrency=1"
+    "test": "node --env-file-if-exists=.env --test --test-concurrency=1 \"test/*.test.js\""
   },
   "engines": {
     "node": ">=22.9"
@@ -17,6 +17,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
     "pg": "^8.23.1"
   },
   "devDependencies": {
